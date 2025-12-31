@@ -90,12 +90,12 @@ def create_ar_df(sym: str, interval: str, start: str, end: str, no_lags: int):
     return df
 
 
-def eval_linreg(df, features: list, target: str):
+def eval_linreg(df, features: list, target: str, train_size: float = 0.3):
     """
     Train and evaluate a linear regression trading strategy.
 
     This function implements a complete backtesting pipeline:
-    1. Splits data into train (30%) and test (70%) sets
+    1. Splits data into train and test sets based on train_size
     2. Trains a linear regression model on training data
     3. Generates predictions and trading signals
     4. Calculates performance metrics (win rate, total return)
@@ -111,6 +111,7 @@ def eval_linreg(df, features: list, target: str):
         features: List of column names to use as features
                  (e.g., ['close_log_return_lag_1', 'close_log_return_lag_2'])
         target: Column name of prediction target (typically 'close_log_return')
+        train_size: Proportion of data to use for training (default 0.3 = 30%)
 
     Returns:
         DataFrame with added columns:
@@ -129,16 +130,16 @@ def eval_linreg(df, features: list, target: str):
     Example:
         >>> df = create_ar_df('BTC', '1h', '2024-01-01', '2024-12-31', no_lags=5)
         >>>
-        >>> # Test using first lag only
+        >>> # Test using first lag only (default 30% train, 70% test)
         >>> features = ['close_log_return_lag_1']
         >>> results = eval_linreg(df, features, 'close_log_return')
         [-0.0001] + -0.0000002
         0.512  # 51.2% win rate
         0.087  # 8.7% total return
 
-        >>> # Test using multiple lags
+        >>> # Test using multiple lags with custom train/test split
         >>> features = ['close_log_return_lag_1', 'close_log_return_lag_2', 'close_log_return_lag_3']
-        >>> results = eval_linreg(df, features, 'close_log_return')
+        >>> results = eval_linreg(df, features, 'close_log_return', train_size=0.5)  # 50/50 split
 
         >>> # Analyze the results
         >>> print(results[['y_hat', 'dir_signal', 'trade_log_return']].tail())
@@ -151,16 +152,16 @@ def eval_linreg(df, features: list, target: str):
 
     Note:
         - Rows with NaN values are dropped before training
-        - Uses 30% of data for training, 70% for testing
+        - Default uses 30% for training, 70% for testing (adjustable via train_size)
         - Model coefficients printed can be used in production (params['model'])
         - Positive coefficient = momentum strategy, negative = mean reversion
     """
     # Remove rows with missing values (from lagged features)
     df.dropna(inplace=True)
 
-    # Split into train (first 30%) and test (last 70%) sets
+    # Split into train and test sets based on train_size parameter
     # Using earlier data for training helps avoid lookahead bias
-    i = int(len(df) * 0.3)
+    i = int(len(df) * train_size)
     df_train, df_test = df[:i].copy(), df[i:].copy()
 
     # Separate features (X) and target (y) for train and test sets
