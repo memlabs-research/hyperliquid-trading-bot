@@ -34,7 +34,7 @@ import numpy as np
 from sklearn.linear_model import LinearRegression
 
 
-def create_ar_df(sym: str, interval: str, start: str, end: str, no_lags: int):
+def create_ar_df(sym: str, interval: str, start: datetime, end: datetime, no_lags: int):
     """
     Create an autoregressive (AR) dataframe with lagged price features.
 
@@ -58,7 +58,7 @@ def create_ar_df(sym: str, interval: str, start: str, end: str, no_lags: int):
         - close_lag_1 to lag_N: Lagged closing prices
 
     Example:
-        >>> df = create_ar_df('BTC', '1h', '2024-01-01', '2024-06-30', no_lags=3)
+        >>> df = create_ar_df('BTC', '1h', datetime(2024,01,01), datetime(2024,06,01), no_lags=3)
         >>> print(df.columns)
         ['o', 'h', 'l', 'c', 'v', 't', 'close_log_return',
          'close_log_return_lag_1', 'close_log_return_lag_2', 'close_log_return_lag_3',
