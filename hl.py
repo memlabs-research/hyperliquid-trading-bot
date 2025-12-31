@@ -36,7 +36,6 @@ _interval_map = {
 
 
 def dl_ohlc(sym: str, interval: str, start: datetime, end: datetime) -> List[Dict[str, Any]]:
-    print(f'dl_ohlc({sym},{interval}, {start}, {end})')
     """
     Download OHLC (candlestick) data for a given symbol and time range from Hyperliquid.
 
