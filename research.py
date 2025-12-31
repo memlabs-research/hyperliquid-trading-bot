@@ -32,6 +32,7 @@ Example usage:
 import hl
 import numpy as np
 from sklearn.linear_model import LinearRegression
+from datetime import datetime
 
 
 def create_ar_df(sym: str, interval: str, start: datetime, end: datetime, no_lags: int):
