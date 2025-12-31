@@ -126,8 +126,6 @@ def dl_prices_ts(coin: str, interval: str) -> List[Tuple[int, str]]:
         ...     print(f"{dt}: ${price}")
     """
     # Download candle data from the exchange API
-    print(coin)
-    print(interval)
     candles = hl.dl_last_candles(coin, interval)
 
     # Convert the downloaded candle data to a list of tuples:
